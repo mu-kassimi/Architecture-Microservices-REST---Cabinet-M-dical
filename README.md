@@ -310,154 +310,37 @@ consultation-service: jdbc:h2:mem:consultationDB
 #### 1. Créer un Patient
 ![Création d'un patient](https://github.com/user-attachments/assets/3d9a0564-16f8-4146-a46c-fadb1e63e637)
 
-**Requête :**
-```http
-POST http://localhost:8080/api/patients
-Content-Type: application/json
-
-{
-  "nom": "Alami Ahmed",
-  "telephone": "0612345678",
-  "dateNaissance": "1990-05-15",
-  "adresse": "123 Rue Hassan II, Rabat"
-}
-```
-
-**Résultat :** HTTP 201 Created - Patient créé avec succès
 
 ---
 
 #### 2. Créer un Médecin
 ![Création d'un médecin](https://github.com/user-attachments/assets/745566f3-4196-4b25-b2dd-806b755c62cb)
 
-**Requête :**
-```http
-POST http://localhost:8080/api/medecins
-Content-Type: application/json
-
-{
-  "nom": "Dr. Bennani Fatima",
-  "email": "f.bennani@cabinet.ma",
-  "specialite": "Cardiologie",
-  "telephone": "0698765432"
-}
-```
-
-**Résultat :** HTTP 201 Created - Médecin créé avec succès
 
 ---
 
 #### 3. Créer un Rendez-vous
 ![Création d'un rendez-vous](https://github.com/user-attachments/assets/8933803c-1d21-404a-a74d-ad3736939f16)
 
-**Requête :**
-```http
-POST http://localhost:8080/api/rendezvous
-Content-Type: application/json
-
-{
-  "patientId": 1,
-  "medecinId": 1,
-  "dateRendezVous": "2026-03-15T10:00:00",
-  "motif": "Consultation cardiologique de contrôle"
-}
-```
-
-**Résultat :** HTTP 201 Created - Rendez-vous créé avec validation inter-services (Patient et Médecin existent)
 
 ---
 
 #### 4. Créer une Consultation
 ![Création d'une consultation](https://github.com/user-attachments/assets/c2b44b60-30d3-43d2-9ca4-990d1361637f)
 
-**Requête :**
-```http
-POST http://localhost:8080/api/consultations
-Content-Type: application/json
-
-{
-  "rendezVousId": 1,
-  "dateConsultation": "2026-03-15T10:30:00",
-  "rapport": "Patient en bonne santé générale. Tension artérielle normale à 120/80. Fréquence cardiaque régulière.",
-  "diagnostic": "État cardiovasculaire satisfaisant",
-  "traitement": "Continuer le mode de vie sain"
-}
-```
-
-**Résultat :** HTTP 201 Created - Consultation créée avec validation (RDV existe, date cohérente)
 
 ---
 
 #### 5. Consulter le Dossier Complet du Patient (Service Composite)
 ![Dossier patient complet](https://github.com/user-attachments/assets/f73e0f0f-7c02-41d2-bdab-b45339523101)
 
-**Requête :**
-```http
-GET http://localhost:8086/internal/api/v1/dossiers/patient/1
-```
 
-**Résultat :** HTTP 200 OK - Agrégation réussie des données de 3 services (Patient, RendezVous, Consultation)
-
-**Réponse JSON :**
-```json
-{
-  "patient": {
-    "id": 1,
-    "nom": "Alami Ahmed",
-    "telephone": "0612345678",
-    "dateNaissance": "1990-05-15",
-    "adresse": "123 Rue Hassan II, Rabat"
-  },
-  "rendezVous": [
-    {
-      "id": 1,
-      "patientId": 1,
-      "medecinId": 1,
-      "dateRendezVous": "2026-03-15T10:00:00",
-      "statut": "PLANIFIE",
-      "motif": "Consultation cardiologique de contrôle"
-    }
-  ],
-  "consultations": [
-    {
-      "id": 1,
-      "rendezVousId": 1,
-      "dateConsultation": "2026-03-15T10:30:00",
-      "rapport": "Patient en bonne santé générale. Tension artérielle normale à 120/80. Fréquence cardiaque régulière.",
-      "diagnostic": "État cardiovasculaire satisfaisant",
-      "traitement": "Continuer le mode de vie sain"
-    }
-  ]
-}
-```
 
 ---
 
 #### 6. Test de Validation - Patient avec Date Future (Doit Échouer)
 ![Validation erreur date future](https://github.com/user-attachments/assets/19c8026b-bbfc-4998-9ef1-7891659f447b)
 
-**Requête :**
-```http
-POST http://localhost:8080/api/patients
-Content-Type: application/json
-
-{
-  "nom": "Test Erreur",
-  "telephone": "0612345678",
-  "dateNaissance": "2027-01-01"
-}
-```
-
-**Résultat :** HTTP 400 Bad Request - Validation échouée
-
-**Réponse JSON :**
-```json
-{
-  "timestamp": "2026-02-16T03:32:59.000+00:00",
-  "message": "La date de naissance ne peut pas être future",
-  "status": 400
-}
-```
 
 ## 📁 Structure des Packages
 
